@@ -42,7 +42,9 @@
 
 @property(nonatomic) BOOL enablePIP;
 
+#if !TARGET_OS_TV
 @property(nonatomic, strong) API_AVAILABLE(ios(15.0)) PIPController *pipController;
+#endif
 
 /**
  * The {@link RRTCVideoRenderer} which implements the actual rendering.
@@ -68,7 +70,9 @@
 @implementation RTCVideoView
 
 @synthesize videoView = _videoView;
+#if !TARGET_OS_TV
 @synthesize pipController = _pipController;
+#endif
 
 /**
  * Tells this view that its window object changed.
@@ -147,9 +151,12 @@
 
 - (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)atIndex {
     // All subviews are treated as fallback views
+#if !TARGET_OS_TV
     [_pipController insertFallbackView:subview];
+#endif
 }
 
+#if !TARGET_OS_TV
 - (void) API_AVAILABLE(ios(15.0)) setPIPOptions:(NSDictionary *)pipOptions {
     if (!pipOptions) {
         _pipController = nil;
@@ -204,6 +211,7 @@
 - (void) API_AVAILABLE(ios(15.0)) stopPIP {
     [_pipController stopPIP];
 }
+#endif
 
 /**
  * Implements the setter of the {@link #objectFit} property of this
@@ -223,9 +231,11 @@
             self.videoView.videoContentMode = UIViewContentModeScaleAspectFit;
         }
 #endif
+#if !TARGET_OS_TV
         if (@available(iOS 15.0, *)) {
             _pipController.objectFit = fit;
         }
+#endif
     }
 }
 
@@ -246,7 +256,9 @@
             });
         }
 
+#if !TARGET_OS_TV
         [_pipController setVideoTrack:videoTrack];
+#endif
         _videoTrack = videoTrack;
 
         // Clear the videoView by rendering a 2x2 blank frame.
@@ -350,6 +362,7 @@ RCT_CUSTOM_VIEW_PROPERTY(streamURL, NSString *, RTCVideoView) {
     });
 }
 
+#if !TARGET_OS_TV
 RCT_CUSTOM_VIEW_PROPERTY(iosPIP, NSDictionary *, RTCVideoView) {
     if (@available(iOS 15.0, *)) {
         [view setPIPOptions:json];
@@ -383,6 +396,8 @@ RCT_EXPORT_METHOD(stopIOSPIP:(nonnull NSNumber *)reactTag) {
         }];
     }
 }
+#endif
+
 + (BOOL)requiresMainQueueSetup {
     return NO;
 }

@@ -1,3 +1,5 @@
+#if !TARGET_OS_TV
+
 #import <AVKit/AVKit.h>
 #import "PIPController.h"
 #import "SampleBufferVideoCallView.h"
@@ -240,3 +242,5 @@
 
 
 @end
+
+#endif
